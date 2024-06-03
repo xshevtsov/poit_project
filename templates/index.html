@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Example Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+    <title>App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            margin: 20px;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #35424a;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        main {
+            margin: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background: #35424a;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        #chart{
+            
+
+        }
+       #canvas {
+            border: 1px solid black;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to My Website</h1>
+    </header>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <main>
+        <div id="chart"></div>
+        <canvas id="canvas" width="128" height="64"></canvas>
+        <button type="button"  onclick="reset_button()" class="btn btn-light">Reset</button>
+        
+    </main>
+    <footer>
+        <p>&copy; 2024 My Website. All rights reserved.</p>
+    </footer>
+</body>
+<script type="text/javascript">
+
+window.addEventListener('load', ()=>{ 
+        
+    document.addEventListener('mousedown', startPainting); 
+    document.addEventListener('mouseup', stopPainting); 
+    document.addEventListener('mousemove', sketch); 
+
+    
+}); 
+
+    
+const canvas = document.querySelector('#canvas'); 
+   
+// Context for the canvas for 2 dimensional operations 
+const ctx = canvas.getContext('2d'); 
+    
+// Resizes the canvas to the available size of the window. 
+
+// Stores the initial position of the cursor 
+let coord = {x:0 , y:0};  
+   
+// This is the flag that we are going to use to  
+// trigger drawing 
+let paint = false; 
+
+function reset_button(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    sendClearDisplay();
+}
+    
+// Updates the coordianates of the cursor when  
+// an event e is triggered to the coordinates where  
+// the said event is triggered. 
+function getPosition(event){ 
+  coord.x = event.clientX - canvas.offsetLeft; 
+  coord.y = event.clientY - canvas.offsetTop; 
+  let data = { x: coord.x, y: coord.y};
+  postJSON(data);
+  console.log(data);
+} 
+
+
+  
+// The following functions toggle the flag to start 
+// and stop drawing 
+function startPainting(event){ 
+  paint = true; 
+  getPosition(event); 
+} 
+function stopPainting(){ 
+  paint = false; 
+} 
+    
+function sketch(event){ 
+  if (!paint) return; 
+  ctx.beginPath(); 
+    
+  ctx.lineWidth = 1 
+   
+  // Sets the end of the lines drawn 
+  // to a round shape. 
+  ctx.lineCap = 'round'; 
+    
+  ctx.strokeStyle = 'green'; 
+      
+  // The cursor to start drawing 
+  // moves to this coordinate 
+  ctx.moveTo(coord.x, coord.y); 
+   
+  // The position of the cursor 
+  // gets updated as we move the 
+  // mouse around. 
+  getPosition(event); 
+   
+  // A line is traced from start 
+  // coordinate to this coordinate 
+  ctx.lineTo(coord.x , coord.y); 
+    
+  // Draws the line. 
+  ctx.stroke(); 
+}
+
+
+var options = {
+        chart: {
+            height: 400,
+            type: "area",
+
+        },
+        animations: {
+            enabled: true
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            width: 2,
+            curve: 'straight'
+        },
+
+
+        xaxis: {
+            type: 'datetime',
+            // range: 1000000,
+            tickAmount: 6,
+            labels: {
+                format: 'yy/MM/dd HH:mm:ss',
+            }
+
+ 
+        },
+        yaxis: {
+            min: -10,
+            max: 40,
+
+        },        
+        tooltip: {
+            x: {
+                format: "yy/MM/dd HH:mm:ss",
+                show: false
+            }
+        },
+
+
+
+        series: [
+            {
+                name: "Temperature",
+                data: [ ]
+            }
+        ],
+
+        fill: {
+            type: "gradient",
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100]
+            }
+        },
+
+
+
+    };
+
+var chart = new ApexCharts(document.querySelector("#chart"), options);
+chart.render();
+
+const updateGraph = () => {
+    fetch("./GetGraphData")
+        .then(response => response.json())
+        .then(data => {
+            // console.log(data);
+            let transformedData = data.map(item => {
+              return [
+                item['timestamp'],
+                item['temperature']
+              ];
+            });
+            // console.log(transformedData);
+            chart.updateSeries([{
+                data: transformedData
+            }])
+        });
+}
+setInterval(updateGraph, 1000);
+
+
+
+function postJSON(data) {
+ 
+    const response = fetch("./SendDisplayData", {
+      method: "POST", // or 'PUT'
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+  //   const result = await response.json();
+  //   console.log("Success:", result);
+  // } catch (error) {
+  //   console.error("Error:", error);
+  // }
+}
+function sendClearDisplay(){
+
+    try {
+        fetch("./clearDisplay", {
+          method: "POST", // or 'PUT'
+        });
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
+
+
+</script>
+</html>
