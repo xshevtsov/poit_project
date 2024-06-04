@@ -55,18 +55,24 @@
             width: 100%;
         }
         #chart{
-            
+            width: 60%;
 
         }
        #canvas {
             border: 1px solid black;
         }
+       #control_block > * {
+         display:table-row; 
+         margin-bottom: 5px;
+         margin-top: 5px;
+
+     }
 
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to My Website</h1>
+        <h1>POIT Project</h1>
     </header>
     <nav>
         <a href="#home">Home</a>
@@ -76,9 +82,13 @@
     </nav>
     <main>
         <div id="chart"></div>
-        <canvas id="canvas" width="128" height="64"></canvas>
-        <button type="button"  onclick="reset_button()" class="btn btn-light">Reset</button>
-        
+        <button type="button" class="btn btn-success" onclick="start_monitoring()">Start Graph Monitoring</button>
+        <button type="button" class="btn btn-warning" onclick="stop_monitoring()">Stop Graph Monitoring</button>
+        <div id ="control_block">
+            <button type="button"  onclick="reset_button()" class="btn btn-light">Clear Display</button>
+            <canvas id="canvas" width="128" height="64"></canvas>
+        </div>
+    
     </main>
     <footer>
         <p>&copy; 2024 My Website. All rights reserved.</p>
@@ -94,6 +104,7 @@ window.addEventListener('load', ()=>{
 
     
 }); 
+
 
     
 const canvas = document.querySelector('#canvas'); 
@@ -251,7 +262,27 @@ const updateGraph = () => {
             }])
         });
 }
-setInterval(updateGraph, 1000);
+
+let live_graph = false;
+let update_interval_pointer = 0;
+
+
+function start_monitoring(){
+    if(!live_graph){
+        update_interval_pointer = setInterval(updateGraph, 1000);
+        live_graph = true;
+    }
+
+}
+
+function stop_monitoring(){
+    if(live_graph){
+        clearInterval(update_interval_pointer);
+        live_graph = false;
+    }
+    
+}
+
 
 
 
