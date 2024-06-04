@@ -11,6 +11,7 @@ app.config['SECRET_KEY'] = 'secret!'
 CORS(app,resources={r"/*":{"origins":"*"}})
 socketio = SocketIO(app,cors_allowed_origins="*")
 
+# id = 0
 
 
 
@@ -180,10 +181,17 @@ def disconnected():
     print("user disconnected")
     emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
 
+
 @socketio.on("graph_data")
 def handle_message(data):
     print("data from the front end: ",str(data['temp']))
     insert_sensor_reading(data['temp'], data['pressure'])
+    # global id 
+
+    # data['file_id'] = id 
+    # id = id+1
+    with open('data.json', 'a', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
     
     # emit("data",{'data':data,'id':request.sid},broadcast=True)
 
