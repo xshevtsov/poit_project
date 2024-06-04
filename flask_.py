@@ -12,7 +12,7 @@ CORS(app,resources={r"/*":{"origins":"*"}})
 socketio = SocketIO(app,cors_allowed_origins="*")
 
 # id = 0
-
+# temp, pressure = [], []
 
 
 
@@ -114,10 +114,6 @@ def get_sensor_readings():
 
 
 
-
-
-
-
 # Example usage
 # insert_sensor_reading(25.2, 1010.50)
 # insert_sensor_reading(26.5, 1009.75)
@@ -128,8 +124,6 @@ def get_sensor_readings():
 # print(get_sensor_readings())
 
 
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -137,6 +131,11 @@ def index():
 @app.route('/GetGraphData', methods = ['GET'])
 def getGraphData():
     return get_sensor_readings()
+
+# @app.route('/style.css')
+# def redirect_to_style():
+#     with open('templates/style.css', 'r', encoding='utf-8') as f:
+#         return f.read()
 
 @app.route('/SendDisplayData',methods = ['POST'])
 def sendDisplayData():
@@ -186,20 +185,26 @@ def disconnected():
 def handle_message(data):
     print("data from the front end: ",str(data['temp']))
     insert_sensor_reading(data['temp'], data['pressure'])
-    # global id 
+    # global temp, pressure
+    # temp.append(data['temp'])
+    # pressure.append(data['pressure'])
 
-    # data['file_id'] = id 
-    # id = id+1
-    with open('data.json', 'a', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    # data_to_file = [{"temp": t, "pressure": p} for t, p in zip(temp, pressure)]
+
+    # print(json.dumps(data_to_file))
+    # # global id 
+
+    # # data['file_id'] = id 
+    # # id = id+1
+    # y = json.dumps(data)
+    # print(y)
+
+    with open('data.json', 'a+', encoding='utf-8') as f:
+        f.write(json.dumps(data, ensure_ascii=False, indent=4)+',')
+
+
     
     # emit("data",{'data':data,'id':request.sid},broadcast=True)
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
