@@ -36,8 +36,8 @@ def insert_sensor_reading(temperature, pressure):
             cursor.execute(count_query)
             row_count = cursor.fetchone()[0]
 
-            # If row count exceeds 100, delete the oldest record
-            if row_count >= 100:
+            # If row count exceeds 1800, delete the oldest record
+            if row_count >= 1800:
                 delete_query = "DELETE FROM SensorReadings ORDER BY timestamp ASC LIMIT 1"
                 cursor.execute(delete_query)
                 connection.commit()
@@ -179,6 +179,12 @@ def disconnected():
     """event listener when client disconnects to the server"""
     print("user disconnected")
     emit("disconnect",f"user {request.sid} disconnected",broadcast=True)
+
+# @socketio.on("SendDisplayData")
+# def handle_message(data):
+#     data = request.get_json() # a multidict containing POST data
+#     print(data)
+#     # socketio.emit("SendDisplayData",f"{data}")
 
 
 @socketio.on("graph_data")
